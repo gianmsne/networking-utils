@@ -4,21 +4,21 @@ A lightweight command-line toolkit for common networking tasks I find myself nee
 
 Built with Python, the project currently provides utilities for discovering local network information, identifying devices on a LAN, and inspecting open ports on the local machine. Currently, it is only a command-line application.
 
+*This project is a work in progress that I intend to iterate on and expand over time.*
 
 ## Features
 
 ### Local IP Information
-- Retrieve the local IP address assigned to the host machine.
+Retrieves the local IP address assigned to the host machine.
 ```
-Your machine's IP is 192.168.0.42
+Your machine's IP is 192.168.x.x
 ````
 
 ### Local Port Scanner
-- Scan the local machine for open TCP ports.
-
-The scanner checks the full TCP port range 1 - 65,535 and reports any ports accepting connections.
+Scans the local machine for open TCP ports. It checks the full TCP port range 1 - 65,535 and reports any ports accepting connections.
 ```
-Scanning for open ports on your device!
+Scanning for open ports on your device.
+
 Port 22 is open
 Port 80 is open
 Port 631 is open
@@ -26,9 +26,7 @@ Port 631 is open
 
 ### Local Network Discovery
 
-Scan the local network for active devices.
-
-The scanner:
+Scan the local network for active devices. The scanner:
 
 * Checks each host for availability
 * Uses concurrent threads to speed up network discovery
@@ -49,22 +47,20 @@ Found 3 devices.
 
 ## Technologies
 
-* Python 3
-* socket: TCP connections and network communication
-* ipaddress: IP address and network manipulation
-* subprocess: interaction with system networking utilities
-* concurrent.futures: concurrent network scanning
-* ThreadPoolExecutor: multi-threaded host discovery
+* Python
+* **socket:** TCP connections and network communication
+* **ipaddress:** IP address and network manipulation
+* **subprocess:** interaction with system networking utilities
+* **concurrent.futures:** concurrent network scanning
+* **ThreadPoolExecutor:** multi-threaded host discovery
 
 
 ## How It Works
 
-**Host Discovery**<br>
-The network scanner determines the hosts within the configured local network and concurrently sends ICMP echo requests to each address.
+### Host Discovery
+The network scanner determines the hosts within the configured local network and concurrently sends ICMP echo requests to each address. A ThreadPoolExecutor is used to check multiple addresses at the same time rather than scanning them sequentially. This is particularly useful because network scanning is largely I/O-bound, with each request spending much of its time waiting for a response.
 
-A ThreadPoolExecutor is used to check multiple addresses at the same time rather than scanning them sequentially. This is particularly useful because network scanning is largely I/O-bound, with each request spending much of its time waiting for a response.
-
-**Port Scanning**<br>
+### Port Scanning
 The port scanner attempts to establish TCP connections to ports on the local machine. A successful connection indicates that a service is listening on that port.
 
 
@@ -104,18 +100,16 @@ After launching the application, a menu provides access to the available utiliti
 2. Scan local machine for open ports
 3. Scan local network for devices
 4. Exit
-* Enter menu item:
+*  Enter menu item:
 ```
 Select an option and follow the prompts.
 
 
 ## Configuration
 
-The local network is currently configured as:
+The local network is currently configured as 192.168.0.0/24.
 
-192.168.0.0/24
-
-If your network uses a different subnet, update the network definition in `scan_for_hosts()`:
+If your network uses a different subnet, update the network definition in the `scan_for_hosts()` method:
 ```
 network = ipaddress.ip_network("192.168.0.0/24", strict=False)
 ```
@@ -125,8 +119,7 @@ get_hostname_via_router(ip, router_ip="192.168.0.1")
 ```
 
 ## Planned Improvements
-
-This project is still evolving. Some features I’d like to add include:
+Some features I’d like to add include:
 
 * Automatic local subnet detection
 * Cross-platform support
@@ -136,7 +129,6 @@ This project is still evolving. Some features I’d like to add include:
 * Better error handling
 * A front-end interface
 
-⸻
 
 ## Project Goals
 
@@ -149,9 +141,6 @@ The primary goal of this project is to build a networking toolkit I can personal
 * Network discovery
 * Socket Programming
 * Multithreading
-
-The project is intentionally being developed incrementally, with new functionality added as I learn more about networking and software development.
-
 
 ***
 
