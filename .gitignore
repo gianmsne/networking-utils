@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# python
+pycache/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# testing files
+test.py
+steps.md
