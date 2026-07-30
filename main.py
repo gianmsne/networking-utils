@@ -1,6 +1,4 @@
-import subprocess
 import time
-from unicodedata import numeric
 from scanner import scan_local, scan_ports, scan_for_hosts
 
 def print_menu():
