@@ -2,16 +2,15 @@ import time
 from scanner import scan_local, scan_ports, scan_for_hosts
 
 def print_menu():
-    for i in range(10): 
+    for _ in range(10): 
         print("\n") 
         time.sleep(0.01)
     print("----- Network Tool -----")
     print("1. Get local machine IP")
     print("2. Scan local machine for open ports")
     print("3. Scan local network for devices")
-    print("4. Exit")
+    print("0. Exit")
     print("\n*  Enter menu item: ", end="")
-
 
 
 def get_int_input(lower_bound, upper_bound):
@@ -29,26 +28,28 @@ def get_int_input(lower_bound, upper_bound):
 
     return response
 
-
+# For state machine menu
+LOWER_BOUND = 0
+UPPER_BOUND = 3
 
 def main():
 
     print_menu()
-    response = get_int_input(1, 4)
+    response = get_int_input(LOWER_BOUND, UPPER_BOUND)
 
-    while response != 4:
+    while response != LOWER_BOUND:
 
         if response == 1:
             scan_local()
 
         elif response == 2:
             scan_ports()
-
+    
         elif response == 3:
             scan_for_hosts()
             
         print_menu()
-        response = get_int_input(1, 4)
+        response = get_int_input(LOWER_BOUND, UPPER_BOUND)
 
     print(" Exiting...")
     time.sleep(0.5)
