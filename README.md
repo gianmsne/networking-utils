@@ -15,7 +15,8 @@ Your machine's IP is 192.168.x.x
 ````
 
 ### Local Port Scanner
-Scans the local machine for open TCP ports. It checks the full TCP port range 1 - 65,535 and reports any ports accepting connections.
+Scans the local machine for open TCP ports. It checks the full TCP port range 1 - 65,535 or a specified port range and reports any ports accepting connections.
+For port ranges <= 20, it will display both closed and open ports.
 ```
 Scanning for open ports on your device.
 
@@ -125,7 +126,6 @@ Some features I’d like to add include:
 * Cross-platform support
 * Simulated network environments using Docker containers
 * Improved port scanning performance
-* Configurable port ranges
 * Better error handling
 * A front-end interface
 
