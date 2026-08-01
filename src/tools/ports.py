@@ -13,13 +13,14 @@ COMMON_PORTS = {
     53 : "DNS",
     80 : "HTTP",
     110: "POP3",
-    123 : "NTP", # https://datatracker.ietf.org/doc/html/rfc5905
+    123 : "NTP",  # https://datatracker.ietf.org/doc/html/rfc5905
     143: "IMAP",
     443 : "HTTPS",
     500 : "ISAKMP",
     587 : "SMTP",
+    631: "IPP [Printing]",
     3306: "MySQL",
-    3389 : "RDP", # https://www.cloudflare.com/learning/access-management/what-is-the-remote-desktop-protocol/
+    3389 : "RDP",  # https://www.cloudflare.com/learning/access-management/what-is-the-remote-desktop-protocol/
     5432: "PostgreSQL",
     6379: "Redis",
     6463: "Discord Rich Presence",
@@ -59,6 +60,7 @@ def split_ports(input_string):
             port_chunks.append(int(item))
 
     return port_chunks
+
 
 def scan_ports():
     """
