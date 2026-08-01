@@ -3,6 +3,32 @@ import socket
 import sys
 import re
 
+# https://www.iana.org/assignments/service-names-port-numbers
+COMMON_PORTS = {
+    20 : "FTP Data",
+    21 : "FTP",
+    22 : "SSH",
+    23: "Telnet",
+    25 : "SMTP",
+    53 : "DNS",
+    80 : "HTTP",
+    110: "POP3",
+    123 : "NTP", # https://datatracker.ietf.org/doc/html/rfc5905
+    143: "IMAP",
+    443 : "HTTPS",
+    500 : "ISAKMP",
+    587 : "SMTP",
+    3306: "MySQL",
+    3389 : "RDP", # https://www.cloudflare.com/learning/access-management/what-is-the-remote-desktop-protocol/
+    5432: "PostgreSQL",
+    6379: "Redis",
+    6463: "Discord Rich Presence",
+    7265: "Raycast Web Socket",
+    8080: "HTTP Proxy",
+    33060: "MySQL Extended UI"
+}
+
+
 def split_ports(input_string):
     """
         Split ports into individual list items.
@@ -61,7 +87,7 @@ def scan_ports():
     # Show closed ports if listing less than 20 ports inclusive
     short_list = True if len(port_list) <= 20 else False 
 
-
+    print()
     try:
         
         for port in port_list:
@@ -77,11 +103,15 @@ def scan_ports():
 
             result = s.connect_ex((target,port))
             if result == 0:
-                    print(f"Port {port} is open")
+                    if port in COMMON_PORTS:
+                         print(f"Port {port} is open ({COMMON_PORTS[port]})")
+                    else:
+                         print(f"Port {port} is open (?)")
             elif short_list:
                     print(f"Port {port} is closed")
             s.close()
-            
+        print()
+    
     except KeyboardInterrupt:
         print("\nExiting Program.")
         sys.exit()
