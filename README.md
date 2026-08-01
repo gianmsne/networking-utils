@@ -22,7 +22,6 @@ Scanning for open ports on your device.
 
 Port 22 is open (SSH)
 Port 80 is open (HTTP)
-Port 631 is open (?)
 Port 3306 is open (MySQL)
 ```
 
