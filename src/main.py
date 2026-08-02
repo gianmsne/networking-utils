@@ -1,6 +1,8 @@
 import time
-from tools.scanner import scan_local, scan_for_hosts
-from tools.ports import scan_ports
+from tools.scanner import scan_local, scan_for_hosts, scan
+from tools.ports import get_ports, scan_ports
+from tools.check_ip import lookup_ip
+from utils.validation import get_int_input, check_ip
 
 def print_menu():
     for _ in range(10): 
@@ -10,44 +12,39 @@ def print_menu():
     print("1. Get local machine IP")
     print("2. Scan local machine for open ports")
     print("3. Scan local network for devices")
+    print("4. Get IP information")
     print("0. Exit")
     print("\n>>> Enter menu item: ", end="")
 
-
-def get_int_input(lower_bound, upper_bound):
-    try:
-        response = int(input())
-    except ValueError:
-        print("\nPlease enter a number")
-        time.sleep(1)
-        return
-
-    if not lower_bound <= response <= upper_bound:
-        print(f"\nEnter a number between {lower_bound} and {upper_bound}")
-        time.sleep(1)
-        return
-
-    return response
-
 # For state machine menu
 LOWER_BOUND = 0
-UPPER_BOUND = 3
+UPPER_BOUND = 4
+
+LOCALHOST = "127.0.0.1"
 
 def main():
 
     print_menu()
     response = get_int_input(LOWER_BOUND, UPPER_BOUND)
-
+    
     while response != LOWER_BOUND:
 
         if response == 1:
             scan_local()
 
         elif response == 2:
-            scan_ports()
+            port_list = get_ports(LOCALHOST)
+            scan_ports(port_list)
     
         elif response == 3:
             scan_for_hosts()
+
+        elif response == 4:
+            ip = None
+            while ip is None:
+                print(">>> Enter IP: ", end="")
+                ip = check_ip()
+            lookup_ip(ip)
             
         print_menu()
         response = get_int_input(LOWER_BOUND, UPPER_BOUND)
