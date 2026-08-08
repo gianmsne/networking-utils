@@ -1,5 +1,6 @@
 import subprocess
 import ipaddress
+import re
 from concurrent.futures import ThreadPoolExecutor
 
 def scan_local():
@@ -42,21 +43,37 @@ def get_hostname_via_router(ip, router_ip="192.168.0.1"):
         pass
     return None
 
+def get_mac_address(ip):
+
+    result = subprocess.run(
+        ["arp", "-n", str(ip)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+    
+    if result.returncode == 0:
+        match = re.search(r"(([0-9a-fA-F]{1,2}:){5}[0-9a-fA-F]{1,2})", result.stdout)
+        if match:
+            return match.group(0)
+
+    return None
+
 
 def scan(ip):
-        """
-            Scan for available devices
-            Pings once, waiting 1s for a response.
-        """
-        result = subprocess.run(
-            ["ping", "-c", "1", "-W", "1", str(ip)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        if result.returncode == 0:
-            return str(ip)
-            # print(ip)
-        return None
+    """
+        Scan for available devices
+        Pings once, waiting 1s for a response.
+    """
+    result = subprocess.run(
+        ["ping", "-c", "1", "-W", "1", str(ip)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    if result.returncode == 0:
+        return str(ip)
+        # print(ip)
+    return None
 
 
 def scan_for_hosts():
