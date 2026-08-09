@@ -1,5 +1,6 @@
 import subprocess
 import ipaddress
+import requests
 import re
 from concurrent.futures import ThreadPoolExecutor
 
@@ -60,6 +61,26 @@ def get_mac_address(ip):
     return None
 
 
+def get_latency(ip):
+    result = subprocess.run(
+        ["ping", "-c", "5", "-W", "5", str(ip)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+
+    if result.returncode == 0:
+        match = re.search(
+            r"round-trip min/avg/max/stddev = [\d.]+/([\d.]+)/[\d.]+/[\d.]+ ms",
+            result.stdout
+        )
+
+        if match:
+            return match.group(1)
+
+    return None
+
+
 def scan(ip):
     """
         Scan for available devices
@@ -74,6 +95,17 @@ def scan(ip):
         return str(ip)
         # print(ip)
     return None
+
+
+def get_vendor(mac):
+    
+    response = requests.get(f"https://api.macvendors.com/{mac}")
+
+    if response.status_code == 200:
+
+        return response.text.strip()
+
+    return "Unknown / locally administered"
 
 
 def scan_for_hosts():

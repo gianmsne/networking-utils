@@ -44,6 +44,7 @@ def main():
             while ip is None:
                 print(">>> Enter IP: ", end="")
                 ip = check_ip()
+            print(">>> Loading...")
             lookup_ip(ip)
             
         print_menu()
