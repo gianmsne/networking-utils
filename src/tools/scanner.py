@@ -1,10 +1,8 @@
-import socket
-import time
-import sys
 import subprocess
 import ipaddress
+import requests
+import re
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
 
 def scan_local():
     """
@@ -22,7 +20,6 @@ def get_local():
     local_ip = subprocess.run('ipconfig getifaddr en0', shell=True, capture_output=True, text=True)
     local_ip = local_ip.stdout.strip()
     return local_ip
-
 
 
 def get_hostname_via_router(ip, router_ip="192.168.0.1"):
@@ -47,26 +44,74 @@ def get_hostname_via_router(ip, router_ip="192.168.0.1"):
         pass
     return None
 
+def get_mac_address(ip):
+
+    result = subprocess.run(
+        ["arp", "-n", str(ip)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+    
+    if result.returncode == 0:
+        match = re.search(r"(([0-9a-fA-F]{1,2}:){5}[0-9a-fA-F]{1,2})", result.stdout)
+        if match:
+            return match.group(0)
+
+    return None
+
+
+def get_latency(ip):
+    result = subprocess.run(
+        ["ping", "-c", "5", "-W", "5", str(ip)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+
+    if result.returncode == 0:
+        match = re.search(
+            r"round-trip min/avg/max/stddev = [\d.]+/([\d.]+)/[\d.]+/[\d.]+ ms",
+            result.stdout
+        )
+
+        if match:
+            return match.group(1)
+
+    return None
+
 
 def scan(ip):
-        """
-            Scan for available devices
-        """
-        result = subprocess.run(
-            ["ping", "-c", "1", "-W", "1", str(ip)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        if result.returncode == 0:
-            return str(ip)
-            # print(ip)
-        return None
+    """
+        Scan for available devices
+        Pings once, waiting 1s for a response.
+    """
+    result = subprocess.run(
+        ["ping", "-c", "1", "-W", "1", str(ip)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    if result.returncode == 0:
+        return str(ip)
+        # print(ip)
+    return None
+
+
+def get_vendor(mac):
+    
+    response = requests.get(f"https://api.macvendors.com/{mac}")
+
+    if response.status_code == 200:
+
+        return response.text.strip()
+
+    return "Unknown / locally administered"
 
 
 def scan_for_hosts():
     """
-    Scans the local /24 network for active hosts using multiple threads,
-    then displays each discovered host's IP address and hostname.
+        Scans the local /24 network for active hosts using multiple threads,
+        then displays each discovered host's IP address and hostname.
     """
     
     network = ipaddress.ip_network("192.168.0.0/24", strict=False)
@@ -81,7 +126,7 @@ def scan_for_hosts():
     print(f"\n{'IP':^13}{'Hostname':>20}")
     for ip in found:
         print(f"{ip:<13} -> {get_hostname_via_router(ip) or '[unknown]'}")
-            
+    
     print(f"\nFound {len(found)} devices.")
 
     print(">>> [ENTER] to return to the menu...")

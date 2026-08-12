@@ -1,4 +1,3 @@
-import time
 import socket
 import sys
 import re
@@ -28,7 +27,6 @@ COMMON_PORTS = {
     8080: "HTTP Proxy",
     33060: "MySQL Extended UI"
 }
-
 
 def split_ports(input_string):
     """
@@ -62,11 +60,10 @@ def split_ports(input_string):
     return port_chunks
 
 
-def scan_ports():
+def get_ports():
     """
-        Scan for open ports on local machine
+        Request port range from user
     """
-    target = "127.0.0.1"
     port_list = []
     short_list = False
 
@@ -85,9 +82,17 @@ def scan_ports():
         port_list += split_ports("1-65535")
     else:
         port_list += split_ports(ports)
+    return port_list
+
+
+def scan_ports(port_list, target, show_closed_ports = None):
+    """
+            Scan specified ports of a target machine
+    """
 
     # Show closed ports if listing less than 20 ports inclusive
-    short_list = True if len(port_list) <= 20 else False 
+    if show_closed_ports is None:
+        show_closed_ports = len(port_list) <= 20
 
     print()
     try:
@@ -98,7 +103,6 @@ def scan_ports():
                 port_list.remove(port)
                 print(f"[!] Removed port {port} from list. Must be 1-65535")
                 continue
-                
 
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socket.setdefaulttimeout(1)
@@ -109,7 +113,7 @@ def scan_ports():
                          print(f"Port {port} is open ({COMMON_PORTS[port]})")
                     else:
                          print(f"Port {port} is open (?)")
-            elif short_list:
+            elif show_closed_ports:
                     print(f"Port {port} is closed")
             s.close()
         print()
