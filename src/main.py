@@ -2,7 +2,7 @@ import time
 from tools.scanner import scan_local, scan_for_hosts, scan
 from tools.ports import get_ports, scan_ports
 from tools.check_ip import lookup_ip
-from utils.validation import get_int_input, check_ip
+from utils.validation import get_int_input, check_ip, get_yes_no
 
 def print_menu():
     for _ in range(10): 
@@ -33,8 +33,8 @@ def main():
             scan_local()
 
         elif response == 2:
-            port_list = get_ports(LOCALHOST)
-            scan_ports(port_list)
+            port_list = get_ports()
+            scan_ports(port_list, LOCALHOST)
     
         elif response == 3:
             scan_for_hosts()
@@ -44,8 +44,11 @@ def main():
             while ip is None:
                 print(">>> Enter IP: ", end="")
                 ip = check_ip()
+
+            port_check = get_yes_no(">>> Scan ports? (Y/n): ")
+
             print(">>> Loading...")
-            lookup_ip(ip)
+            lookup_ip(ip, port_check)
             
         print_menu()
         response = get_int_input(LOWER_BOUND, UPPER_BOUND)

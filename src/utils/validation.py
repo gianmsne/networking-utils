@@ -27,3 +27,14 @@ def check_ip():
         return None
     
     return response
+
+def get_yes_no(prompt="Continue? [Y/n]: "):
+    while True:
+        response = input(prompt).strip().lower()
+
+        if response in ("y", "yes", ""):
+            return True
+        if response in ("n", "no"):
+            return False
+        
+        print("[!] Please enter y/n.")
