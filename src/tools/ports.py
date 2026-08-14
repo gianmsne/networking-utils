@@ -3,31 +3,13 @@ import re
 from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 
-# https://www.iana.org/assignments/service-names-port-numbers
-COMMON_PORTS = {
-    20 : "FTP Data",
-    21 : "FTP",
-    22 : "SSH",
-    23: "Telnet",
-    25 : "SMTP",
-    53 : "DNS",
-    80 : "HTTP",
-    110: "POP3",
-    123 : "NTP",  # https://datatracker.ietf.org/doc/html/rfc5905
-    143: "IMAP",
-    443 : "HTTPS",
-    500 : "ISAKMP",
-    587 : "SMTP",
-    631: "IPP [Printing]",
-    3306: "MySQL",
-    3389 : "RDP",  # https://www.cloudflare.com/learning/access-management/what-is-the-remote-desktop-protocol/
-    5432: "PostgreSQL",
-    6379: "Redis",
-    6463: "Discord Rich Presence",
-    7265: "Raycast Web Socket",
-    8080: "HTTP Proxy",
-    33060: "MySQL Extended UI"
-}
+from config import (
+    COMMON_PORTS,
+    DEFAULT_MAX_WORKERS,
+    DEFAULT_TIMEOUT,
+    MAX_PORT,
+    MIN_PORT,
+)
 
 def split_ports(input_string):
     """
@@ -65,7 +47,6 @@ def get_ports():
     """
         Request port range from user
     """
-    port_list = []
 
     ports = input(
         "\nPort Scan\n"
@@ -79,17 +60,16 @@ def get_ports():
     )
     
     if not ports:
-        port_list += split_ports("1-65535")
-    else:
-        port_list += split_ports(ports)
-    return port_list
+        return split_ports("1-65535")
+    
+    return split_ports(ports)
 
 def scan_ports(port, target, show_closed_ports=True):
-    if port < 1 or port > 65535:
+    if port < MIN_PORT or port > MAX_PORT:
         print(f"[!] Removed port {port} from list. Must be 1-65535")
         return
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.settimeout(0.5)
+        s.settimeout(DEFAULT_TIMEOUT)
         result = s.connect_ex((target, port))
     if result == 0:
         if port in COMMON_PORTS:
@@ -115,7 +95,7 @@ def print_ports(port_list, target, show_closed_ports = None):
         show_closed_ports=show_closed_ports
     )
 
-    with ThreadPoolExecutor(max_workers=200) as executor:
+    with ThreadPoolExecutor(max_workers=DEFAULT_MAX_WORKERS) as executor:
         list(executor.map(scan, port_list))
 
     print()
