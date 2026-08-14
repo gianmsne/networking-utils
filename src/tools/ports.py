@@ -11,7 +11,7 @@ from config import (
     MIN_PORT,
 )
 
-def split_ports(input_string):
+def parse_ports(input_string):
     """
         Split ports into individual list items.
         Handles ranges (e.g. 20-500)
@@ -26,14 +26,11 @@ def split_ports(input_string):
 
         if match:
 
-            start_var = match.group(1)
-            end_var = match.group(2)
+            start = int(match.group(1))
+            end = int(match.group(2))
 
-            if not start_var.isnumeric() or not end_var.isnumeric():
+            if start > end:
                 continue
-            
-            start = int(start_var)
-            end = int(end_var)
 
             port_chunks.extend(range(start, end + 1))
                                      
@@ -60,17 +57,21 @@ def get_ports():
     )
     
     if not ports:
-        return split_ports("1-65535")
+        return parse_ports("1-65535")
     
-    return split_ports(ports)
+    return parse_ports(ports)
 
-def scan_ports(port, target, show_closed_ports=True):
+
+def scan_ports(port, target, show_closed_ports=None):
+
     if port < MIN_PORT or port > MAX_PORT:
-        print(f"[!] Removed port {port} from list. Must be 1-65535")
+        print(f"[!] Removed port {port} from list. Must be {MIN_PORT}-{MAX_PORT}")
         return
+    
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(DEFAULT_TIMEOUT)
         result = s.connect_ex((target, port))
+
     if result == 0:
         if port in COMMON_PORTS:
             print(f"Port {port} is open ({COMMON_PORTS[port]})")
