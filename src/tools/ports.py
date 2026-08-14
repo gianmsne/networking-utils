@@ -1,6 +1,7 @@
 import socket
-import sys
 import re
+from functools import partial
+from concurrent.futures import ThreadPoolExecutor
 
 # https://www.iana.org/assignments/service-names-port-numbers
 COMMON_PORTS = {
@@ -65,7 +66,6 @@ def get_ports():
         Request port range from user
     """
     port_list = []
-    short_list = False
 
     ports = input(
         "\nPort Scan\n"
@@ -84,49 +84,40 @@ def get_ports():
         port_list += split_ports(ports)
     return port_list
 
+def scan_ports(port, target, show_closed_ports=True):
+    if port < 1 or port > 65535:
+        print(f"[!] Removed port {port} from list. Must be 1-65535")
+        return
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.5)
+        result = s.connect_ex((target, port))
+    if result == 0:
+        if port in COMMON_PORTS:
+            print(f"Port {port} is open ({COMMON_PORTS[port]})")
+        else:
+            print(f"Port {port} is open (?)")
+    elif show_closed_ports:
+        print(f"Port {port} is closed")
+    
 
-def scan_ports(port_list, target, show_closed_ports = None):
+def print_ports(port_list, target, show_closed_ports = None):
     """
             Scan specified ports of a target machine
     """
 
     # Show closed ports if listing less than 20 ports inclusive
     if show_closed_ports is None:
-        show_closed_ports = len(port_list) <= 20
+            show_closed_ports = len(port_list) <= 20
+
+    scan = partial(
+        scan_ports,
+        target=target,
+        show_closed_ports=show_closed_ports
+    )
+
+    with ThreadPoolExecutor(max_workers=200) as executor:
+        list(executor.map(scan, port_list))
 
     print()
-    try:
-        
-        for port in port_list:
-            
-            if port < 1 or port > 65535:
-                port_list.remove(port)
-                print(f"[!] Removed port {port} from list. Must be 1-65535")
-                continue
-
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket.setdefaulttimeout(1)
-
-            result = s.connect_ex((target,port))
-            if result == 0:
-                    if port in COMMON_PORTS:
-                         print(f"Port {port} is open ({COMMON_PORTS[port]})")
-                    else:
-                         print(f"Port {port} is open (?)")
-            elif show_closed_ports:
-                    print(f"Port {port} is closed")
-            s.close()
-        print()
-    
-    except KeyboardInterrupt:
-        print("\nExiting Program.")
-        sys.exit()
-    except socket.gaierror:
-        print("\nHostname Could Not Be Resolved.")
-        sys.exit()
-    except socket.error:
-        print("\nServer not responding.")
-        sys.exit()
-
     print(">>> [ENTER] to return to the menu...")
     input()
