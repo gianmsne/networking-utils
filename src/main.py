@@ -1,8 +1,9 @@
 import time
-from tools.scanner import scan_local, scan_for_hosts, scan
+from tools.scanner import scan_local, scan_for_hosts
 from tools.ports import get_ports, print_ports
 from tools.check_ip import lookup_ip
 from utils.validation import get_int_input, check_ip, get_yes_no
+from config import LOCALHOST
 
 def print_menu():
     for _ in range(10): 
@@ -19,8 +20,6 @@ def print_menu():
 # Bounds for state machine menu
 LOWER_BOUND = 0
 UPPER_BOUND = 4
-
-LOCALHOST = "127.0.0.1"
 
 def main():
 

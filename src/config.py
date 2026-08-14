@@ -8,6 +8,8 @@ MAX_PORT = 65535
 DEFAULT_TIMEOUT = 0.5
 DEFAULT_MAX_WORKERS = 200
 
+LOCALHOST = "127.0.0.1"
+
 # https://www.iana.org/assignments/service-names-port-numbers
 COMMON_PORTS = {
     20:     "FTP Data",
