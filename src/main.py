@@ -1,6 +1,6 @@
 import time
 from tools.scanner import scan_local, scan_for_hosts, scan
-from tools.ports import get_ports, scan_ports
+from tools.ports import get_ports, print_ports
 from tools.check_ip import lookup_ip
 from utils.validation import get_int_input, check_ip, get_yes_no
 
@@ -16,7 +16,7 @@ def print_menu():
     print("0. Exit")
     print("\n>>> Enter menu item: ", end="")
 
-# For state machine menu
+# Bounds for state machine menu
 LOWER_BOUND = 0
 UPPER_BOUND = 4
 
@@ -34,7 +34,7 @@ def main():
 
         elif response == 2:
             port_list = get_ports()
-            scan_ports(port_list, LOCALHOST)
+            print_ports(port_list, LOCALHOST)
     
         elif response == 3:
             scan_for_hosts()
@@ -45,7 +45,7 @@ def main():
                 print(">>> Enter IP: ", end="")
                 ip = check_ip()
 
-            port_check = get_yes_no(">>> Scan ports? (Y/n): ")
+            port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
 
             print(">>> Loading...")
             lookup_ip(ip, port_check)

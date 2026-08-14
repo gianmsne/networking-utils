@@ -1,6 +1,6 @@
 from utils.validation import check_ip
 from tools.scanner import get_hostname_via_router, scan, get_mac_address, get_latency, get_vendor
-from tools.ports import scan_ports, split_ports
+from tools.ports import scan_ports, split_ports, print_ports
 
 def lookup_ip(ip, port_check):
     
@@ -28,8 +28,8 @@ def lookup_ip(ip, port_check):
         print("Unavailable")
 
     if(port_check):
-        print("\n--- Open Ports ---", end="")
-        scan_ports(port_list, ip, show_closed_ports=False)
+        print("\n--- Open Ports ---")
+        print_ports(port_list, ip, show_closed_ports=False)
     else:
         print("\n\n>>> [ENTER] to return to the menu...")
         input()
