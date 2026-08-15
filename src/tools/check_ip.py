@@ -1,4 +1,3 @@
-from utils.validation import check_ip
 from tools.scanner import get_hostname_via_router, scan, get_mac_address, get_latency, get_vendor
 from tools.ports import parse_ports, print_ports
 
