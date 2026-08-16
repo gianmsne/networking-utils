@@ -18,7 +18,9 @@ def get_int_input(lower_bound, upper_bound):
 
 def check_ip():
     response = input()
-    
+
+    if response == '0':
+        return response
     if not response.count(".") == 3:
         print("[!] Please enter a valid IP address.")
         return None

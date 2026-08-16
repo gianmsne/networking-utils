@@ -16,7 +16,7 @@ def parse_ports(input_string):
         Split ports into individual list items.
         Handles ranges (e.g. 20-500)
     """
-
+    
     ports = re.split(r'[,\s]+', input_string)
     port_chunks = []
 
@@ -52,18 +52,22 @@ def get_ports():
         "  e.g. 1,5,22,40-1024,8080\n"
         "\n"
         "  [ENTER] Scan all ports (1-65535)\n"
+        "  [0]     Cancel and return to menu\n"
         "----------------------------------------\n"
         "> "
     )
-    
+
+    if ports == '0':
+        return None
     if not ports:
         return parse_ports("1-65535")
+    
     
     return parse_ports(ports)
 
 
 def scan_ports(port, target, show_closed_ports=None):
-
+    
     if port < MIN_PORT or port > MAX_PORT:
         print(f"[!] Removed port {port} from list. Must be {MIN_PORT}-{MAX_PORT}")
         return

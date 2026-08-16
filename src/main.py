@@ -33,7 +33,12 @@ def main():
 
         elif response == 2:
             port_list = get_ports()
-            print_ports(port_list, LOCALHOST)
+
+            if port_list is None:
+                print("\n\n>>> [ENTER] to return to the menu...")
+                input()
+            else:
+                print_ports(port_list, LOCALHOST)
     
         elif response == 3:
             scan_for_hosts()
@@ -41,13 +46,17 @@ def main():
         elif response == 4:
             ip = None
             while ip is None:
-                print(">>> Enter IP: ", end="")
+                print(">>> Enter IP ([0] to cancel): ", end="")
                 ip = check_ip()
 
-            port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
+            if ip == '0':
+                print("\n\n>>> [ENTER] to return to the menu...")
+                input()
+            else:
+                port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
 
-            print(">>> Loading...")
-            lookup_ip(ip, port_check)
+                print(">>> Loading...")
+                lookup_ip(ip, port_check)
             
         print_menu()
         response = get_int_input(LOWER_BOUND, UPPER_BOUND)
