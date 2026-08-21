@@ -125,8 +125,6 @@ Some features I’d like to add include:
 * Automatic local subnet detection
 * Cross-platform support
 * Simulated network environments using Docker containers
-* Improved port scanning performance
-* Better error handling
 * A front-end interface
 
 
