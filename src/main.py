@@ -3,6 +3,7 @@ from tools.scanner import scan_local, scan_for_hosts
 from tools.ports import get_ports, print_ports
 from tools.check_ip import lookup_ip
 from utils.validation import get_int_input, check_ip, get_yes_no
+import platform
 from config import LOCALHOST
 
 def print_menu():
@@ -17,6 +18,12 @@ def print_menu():
     print("0. Exit")
     print("\n>>> Enter menu item: ", end="")
 
+def windows_warning():
+    print("\n\n>>> [!] Sorry, this tool does not work on Windows yet.\n")
+    time.sleep(1)
+    print("Returning to menu...")
+    time.sleep(2)
+
 # Bounds for state machine menu
 LOWER_BOUND = 0
 UPPER_BOUND = 4
@@ -25,9 +32,8 @@ def main():
 
     print_menu()
     response = get_int_input(LOWER_BOUND, UPPER_BOUND)
-    
-    while response != LOWER_BOUND:
 
+    while response != LOWER_BOUND:
         if response == 1:
             scan_local()
 
@@ -41,22 +47,28 @@ def main():
                 print_ports(port_list, LOCALHOST)
     
         elif response == 3:
-            scan_for_hosts()
+            if platform.system() == "Windows":
+                windows_warning()
+            else:
+                scan_for_hosts()
 
         elif response == 4:
-            ip = None
-            while ip is None:
-                print(">>> Enter IP ([0] to cancel): ", end="")
-                ip = check_ip()
-
-            if ip == '0':
-                print("\n\n>>> [ENTER] to return to the menu...")
-                input()
+            if platform.system() == "Windows":
+                windows_warning()
             else:
-                port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
+                ip = None
+                while ip is None:
+                    print(">>> Enter IP ([0] to cancel): ", end="")
+                    ip = check_ip()
 
-                print(">>> Loading...")
-                lookup_ip(ip, port_check)
+                if ip == '0':
+                    print("\n\n>>> [ENTER] to return to the menu...")
+                    input()
+                else:
+                    port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
+
+                    print(">>> Loading...")
+                    lookup_ip(ip, port_check)
             
         print_menu()
         response = get_int_input(LOWER_BOUND, UPPER_BOUND)

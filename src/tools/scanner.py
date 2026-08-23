@@ -1,15 +1,26 @@
 import subprocess
 import ipaddress
 import requests
+import platform
 import re
 from concurrent.futures import ThreadPoolExecutor
+from subprocess import check_output
 
 def scan_local():
     """
     Prompt a shell command to print the host machine IP and wait for input
     """
     print("\nYour machine's ip is ", end="")
-    subprocess.run('ipconfig getifaddr en0', shell=True)
+    if platform.system() == "Windows":
+        subprocess.run(
+            [
+                "powershell",
+                "-Command",
+                '(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Wi-Fi").IPAddress'
+            ]
+        )
+    else:
+        subprocess.run('ipconfig getifaddr en0', shell=True)
     print("Press [ENTER] to return to the menu...")
     input()
 
@@ -17,8 +28,13 @@ def get_local():
     """
         Prompt a shell command to get the host machine IP without printing
     """
-    local_ip = subprocess.run('ipconfig getifaddr en0', shell=True, capture_output=True, text=True)
-    local_ip = local_ip.stdout.strip()
+
+    if platform.system() == "Windows":
+        local_ip = subprocess.run('(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Wi-Fi").IPAddress', 
+                        shell=True, capture_output=True, text=True)
+    else:
+        local_ip = subprocess.run('ipconfig getifaddr en0', shell=True, capture_output=True, text=True)
+        local_ip = local_ip.stdout.strip()
     return local_ip
 
 
