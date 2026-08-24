@@ -30,8 +30,13 @@ def get_local():
     """
 
     if platform.system() == "Windows":
-        local_ip = subprocess.run('(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Wi-Fi").IPAddress', 
-                        shell=True, capture_output=True, text=True)
+        local_ip = subprocess.run(
+            '(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Wi-Fi").IPAddress',
+            shell=True,
+            capture_output=True,
+            text=True
+        )
+        local_ip = local_ip.stdout.strip()
     else:
         local_ip = subprocess.run('ipconfig getifaddr en0', shell=True, capture_output=True, text=True)
         local_ip = local_ip.stdout.strip()
@@ -47,23 +52,39 @@ def get_hostname_via_router(ip, router_ip="192.168.0.1"):
     try:
         if platform.system() == "Windows":
             result = subprocess.run(
-                ["nslookup", ip],
-                capture_output=True, text=True, timeout=2
+                ["ping", "-a", "-n", "1", "-w", "1000", str(ip)],
+                capture_output=True,
+                text=True,
+                timeout=2
             )
+
+            match = re.search(
+                rf"Pinging (.+?) \[{re.escape(str(ip))}\]",
+                result.stdout
+            )
+
+            if not match:
+                return None
+
+            hostname = match.group(1).strip()
+
+            if ip == get_local():
+                hostname += " (Your Device)"
+
+            return hostname
+        
         else:
             result = subprocess.run(
                 ["nslookup", ip, router_ip],
                 capture_output=True, text=True, timeout=2
             )
-        print(result)
-        for line in result:
-            # if "name =" in line:
-            #     hostname = line.split("name =")[1].strip().removesuffix(".modem.")
-            # if "Name:" in line:
-            #     hostname = line.split("Name:")[1].strip().removesuffix(".modem.")
-            if ip == get_local():
-                hostname += " (Your Device)"
-            return hostname
+            
+            for line in result.stdout.splitlines():
+                if "name =" in line:
+                    hostname = line.split("name =")[1].strip().removesuffix(".modem.")
+                    if ip == get_local():
+                        hostname += " (Your Device)"
+                    return hostname
     except Exception:
         pass
     return None
@@ -113,7 +134,7 @@ def scan(ip):
     
     if platform.system() == "Windows":
         result = subprocess.run(
-            ["ping", "-n", "1", str(ip)],
+            ["ping", "-n", "1", "-w", "1000", str(ip)],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )

@@ -47,10 +47,7 @@ def main():
                 print_ports(port_list, LOCALHOST)
     
         elif response == 3:
-            # if platform.system() == "Windows":
-            #     os_warning("Windows")
-            # else:
-                scan_for_hosts()
+            scan_for_hosts()
 
         elif response == 4:
             if platform.system() == "Windows":
