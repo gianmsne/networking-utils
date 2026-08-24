@@ -18,8 +18,8 @@ def print_menu():
     print("0. Exit")
     print("\n>>> Enter menu item: ", end="")
 
-def windows_warning():
-    print("\n\n>>> [!] Sorry, this tool does not work on Windows yet.\n")
+def os_warning(os):
+    print(f"\n\n>>> [!] Sorry, this tool does not work on {os} yet.\n")
     time.sleep(1)
     print("Returning to menu...")
     time.sleep(2)
@@ -47,14 +47,14 @@ def main():
                 print_ports(port_list, LOCALHOST)
     
         elif response == 3:
-            if platform.system() == "Windows":
-                windows_warning()
-            else:
+            # if platform.system() == "Windows":
+            #     os_warning("Windows")
+            # else:
                 scan_for_hosts()
 
         elif response == 4:
             if platform.system() == "Windows":
-                windows_warning()
+                os_warning("Windows")
             else:
                 ip = None
                 while ip is None:

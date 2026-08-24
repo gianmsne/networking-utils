@@ -45,17 +45,25 @@ def get_hostname_via_router(ip, router_ip="192.168.0.1"):
         router instead of relying on system default DNS)
     """
     try:
-        result = subprocess.run(
-            ["nslookup", ip, router_ip],
-            capture_output=True, text=True, timeout=2
-        )
-        
-        for line in result.stdout.splitlines():
-            if "name =" in line:
-                hostname = line.split("name =")[1].strip().removesuffix(".modem.")
-                if ip == get_local():
-                    hostname += " (Your Device)"
-                return hostname
+        if platform.system() == "Windows":
+            result = subprocess.run(
+                ["nslookup", ip],
+                capture_output=True, text=True, timeout=2
+            )
+        else:
+            result = subprocess.run(
+                ["nslookup", ip, router_ip],
+                capture_output=True, text=True, timeout=2
+            )
+        print(result)
+        for line in result:
+            # if "name =" in line:
+            #     hostname = line.split("name =")[1].strip().removesuffix(".modem.")
+            # if "Name:" in line:
+            #     hostname = line.split("Name:")[1].strip().removesuffix(".modem.")
+            if ip == get_local():
+                hostname += " (Your Device)"
+            return hostname
     except Exception:
         pass
     return None
@@ -102,11 +110,20 @@ def scan(ip):
         Scan for available devices
         Pings once, waiting 1s for a response.
     """
-    result = subprocess.run(
-        ["ping", "-c", "1", "-W", "1", str(ip)],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
+    
+    if platform.system() == "Windows":
+        result = subprocess.run(
+            ["ping", "-n", "1", str(ip)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+    else:
+        result = subprocess.run(
+            ["ping", "-c", "1", "-W", "1", str(ip)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
     if result.returncode == 0:
         return str(ip)
         # print(ip)
