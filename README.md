@@ -70,10 +70,10 @@ The port scanner attempts to establish TCP connections to ports on the local mac
 Requirements:
 
 * Python 3.9+
-* macOS or another Unix-like operating system (for now)
+* macOS, Windows or Linux Operating Systems
 * Access to the local network
 
-The current implementation uses system networking commands such as ping, nslookup, and ipconfig, so some functionality may require modification for Windows.
+The current implementation may be slower on Windows devices and older hardware.
 
 Clone the repository:
 ```
@@ -123,7 +123,6 @@ get_hostname_via_router(ip, router_ip="192.168.0.1")
 Some features I’d like to add include:
 
 * Automatic local subnet detection
-* Cross-platform support
 * Simulated network environments using Docker containers
 * A front-end interface
 

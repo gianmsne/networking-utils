@@ -17,6 +17,12 @@ def print_menu():
     print("0. Exit")
     print("\n>>> Enter menu item: ", end="")
 
+def os_warning(os):
+    print(f"\n\n>>> [!] Sorry, this tool does not work on {os} yet.\n")
+    time.sleep(1)
+    print("Returning to menu...")
+    time.sleep(2)
+
 # Bounds for state machine menu
 LOWER_BOUND = 0
 UPPER_BOUND = 4
@@ -25,9 +31,8 @@ def main():
 
     print_menu()
     response = get_int_input(LOWER_BOUND, UPPER_BOUND)
-    
-    while response != LOWER_BOUND:
 
+    while response != LOWER_BOUND:
         if response == 1:
             scan_local()
 

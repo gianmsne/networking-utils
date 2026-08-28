@@ -4,6 +4,7 @@
 # python
 pycache/
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *.egg-info/
 
@@ -11,7 +12,3 @@ __pycache__/
 .venv/
 venv/
 env/
-
-# testing files
-test.py
-steps.md
