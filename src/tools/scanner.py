@@ -11,7 +11,6 @@ def get_local():
     system = platform.system()
 
     if system == "Windows":
-        # Avoid hard-coding interface aliases (e.g., "Wi-Fi" vs "Ethernet").
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 s.connect(("8.8.8.8", 80))
