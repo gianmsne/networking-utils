@@ -7,7 +7,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 def get_local():
-    """Cross-platform local IP lookup, shared by scan_local() and get_local()."""
+    """Cross-platform local IP lookup, shared by scan_local() and get_hostname_via_router()."""
     system = platform.system()
 
     if system == "Windows":
