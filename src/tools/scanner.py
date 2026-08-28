@@ -11,15 +11,13 @@ def get_local():
     system = platform.system()
 
     if system == "Windows":
-        result = subprocess.run(
-            [
-                "powershell", "-Command",
-                '(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Wi-Fi").IPAddress'
-            ],
-            capture_output=True,
-            text=True
-        )
-        return result.stdout.strip()
+        # Avoid hard-coding interface aliases (e.g., "Wi-Fi" vs "Ethernet").
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+                s.connect(("8.8.8.8", 80))
+                return s.getsockname()[0]
+        except OSError:
+            return ""
 
     elif system == "Darwin":  # macOS
         result = subprocess.run(
