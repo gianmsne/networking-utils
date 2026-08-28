@@ -50,22 +50,19 @@ def main():
             scan_for_hosts()
 
         elif response == 4:
-            if platform.system() == "Windows":
-                os_warning("Windows")
+            ip = None
+            while ip is None:
+                print(">>> Enter IP ([0] to cancel): ", end="")
+                ip = check_ip()
+
+            if ip == '0':
+                print("\n\n>>> [ENTER] to return to the menu...")
+                input()
             else:
-                ip = None
-                while ip is None:
-                    print(">>> Enter IP ([0] to cancel): ", end="")
-                    ip = check_ip()
+                port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
 
-                if ip == '0':
-                    print("\n\n>>> [ENTER] to return to the menu...")
-                    input()
-                else:
-                    port_check = get_yes_no(">>> Scan ports? [Y/n]: ")
-
-                    print(">>> Loading...")
-                    lookup_ip(ip, port_check)
+                print(">>> Loading...")
+                lookup_ip(ip, port_check)
             
         print_menu()
         response = get_int_input(LOWER_BOUND, UPPER_BOUND)
