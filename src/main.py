@@ -3,7 +3,6 @@ from tools.scanner import scan_local, scan_for_hosts
 from tools.ports import get_ports, print_ports
 from tools.check_ip import lookup_ip
 from utils.validation import get_int_input, check_ip, get_yes_no
-import platform
 from config import LOCALHOST
 
 def print_menu():
