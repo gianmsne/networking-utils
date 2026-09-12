@@ -31,10 +31,16 @@ def subnet_calculator():
             "\nSubnet Calculator\n"
             "----------------------------------------\n"
             "Enter the IP address\n"
-            "  e.g. 192.168.1.0/24\n"
+            " e.g. 192.168.1.0/24\n"
             "\n"
+            " [0] Cancel and return to menu\n"
+            "----------------------------------------\n"
             "> "
         )
+        if address == "0":
+            print("\n\n>>> [ENTER] to return to the menu...")
+            input()
+            return
         if is_valid_ip(address):
             break
         print("Invalid IP address, please try again.")
@@ -117,5 +123,3 @@ def subnet_calculator():
     print(separator)
     for row in rows:
         print(format_row(row))
-
-subnet_calculator()
