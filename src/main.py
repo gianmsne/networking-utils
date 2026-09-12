@@ -2,6 +2,7 @@ import time
 from tools.scanner import scan_local, scan_for_hosts
 from tools.ports import get_ports, print_ports
 from tools.check_ip import lookup_ip
+from tools.subnet_calculator import subnet_calculator
 from utils.validation import get_int_input, check_ip, get_yes_no
 from config import LOCALHOST
 
@@ -14,6 +15,8 @@ def print_menu():
     print("2. Scan local machine for open ports")
     print("3. Scan local network for devices")
     print("4. Get IP information")
+    print()
+    print("5. Subnet Calculator")
     print("0. Exit")
     print("\n>>> Enter menu item: ", end="")
 
@@ -25,7 +28,7 @@ def os_warning(os):
 
 # Bounds for state machine menu
 LOWER_BOUND = 0
-UPPER_BOUND = 4
+UPPER_BOUND = 5
 
 def main():
 
@@ -62,6 +65,8 @@ def main():
 
                 print(">>> Loading...")
                 lookup_ip(ip, port_check)
+        elif response == 5:
+            subnet_calculator()
             
         print_menu()
         response = get_int_input(LOWER_BOUND, UPPER_BOUND)
